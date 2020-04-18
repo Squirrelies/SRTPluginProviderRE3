@@ -184,8 +184,13 @@ namespace SRTPluginProviderRE3
             }
             for (int i = 0; i < PointerInventoryEntries.Length; ++i)
             {
-                long invDataOffset = PointerInventoryEntries[i].DerefLong(0x10) - PointerInventoryEntries[i].Address;
-                gameMemoryValues.PlayerInventory[i].SetValues(PointerInventoryEntries[i].DerefInt(0x28), PointerInventoryEntries[i].DerefByteArray(invDataOffset + 0x10, 0x14));
+                if (i < gameMemoryValues.PlayerInventoryCount)
+                {
+                    long invDataOffset = PointerInventoryEntries[i].DerefLong(0x10) - PointerInventoryEntries[i].Address;
+                    gameMemoryValues.PlayerInventory[i].SetValues(PointerInventoryEntries[i].DerefInt(0x28), PointerInventoryEntries[i].DerefByteArray(invDataOffset + 0x10, 0x14));
+                }
+                else
+                    gameMemoryValues.PlayerInventory[i].SetValues(PointerInventoryEntries[i].DerefInt(0x28), null);
             }
 
             // Other stats and info.
