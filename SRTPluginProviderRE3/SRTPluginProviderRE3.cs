@@ -34,6 +34,13 @@ namespace SRTPluginProviderRE3
         {
             try
             {
+                if (!gameMemoryScanner.ProcessRunning)
+                {
+                    hostDelegates.Exit();
+                    stopwatch.Restart();
+                    return null;
+                }
+
                 if (stopwatch.ElapsedMilliseconds >= 2000L)
                 {
                     gameMemoryScanner.UpdatePointers();
