@@ -21,7 +21,10 @@ namespace SRTPluginProviderRE3
         int Saves { get; set; }
         int MapID { get; set; }
         float FrameDelta { get; set; }
-        int State { get; set; }
+        bool IsRunning { get; set; }
+        bool IsCutscene { get; set; }
+        bool IsMenu { get; set; }
+        bool IsPaused { get; set; }
         long IGTCalculated { get; }
         long IGTCalculatedTicks { get; }
         TimeSpan IGTTimeSpan { get; }

@@ -37,7 +37,10 @@ namespace SRTPluginProviderRE3
 
         public float FrameDelta { get; set; }
 
-        public int State { get; set; }
+        public bool IsRunning { get; set; }
+        public bool IsCutscene { get; set; }
+        public bool IsMenu { get; set; }
+        public bool IsPaused { get; set; }
 
         // Public Properties - Calculated
         public long IGTCalculated => unchecked(IGTRunningTimer - IGTCutsceneTimer - IGTPausedTimer);
@@ -94,7 +97,7 @@ namespace SRTPluginProviderRE3
                     SRank = new TimeSpan(0, 2, 30, 0);
                     BRank = new TimeSpan(0, 4, 0, 0);
                 }
-                else if (Difficulty == 1)
+                else if (Difficulty == 1 || Difficulty == 3 || Difficulty == 4)
                 {
                     SRank = new TimeSpan(0, 2, 0, 0);
                     BRank = new TimeSpan(0, 4, 0, 0);
@@ -102,16 +105,6 @@ namespace SRTPluginProviderRE3
                 else if (Difficulty == 2)
                 {
                     SRank = new TimeSpan(0, 1, 45, 0);
-                    BRank = new TimeSpan(0, 4, 0, 0);
-                }
-                else if (Difficulty == 3)
-                {
-                    SRank = new TimeSpan(0, 2, 0, 0);
-                    BRank = new TimeSpan(0, 4, 0, 0);
-                }
-                else if (Difficulty == 4)
-                {
-                    SRank = new TimeSpan(0, 2, 0, 0);
                     BRank = new TimeSpan(0, 4, 0, 0);
                 }
 

@@ -136,7 +136,10 @@ namespace SRTPluginProviderRE3
             gameMemoryValues.FrameDelta = PointerFrameDelta.DerefFloat(0x388);
 
             // State
-            gameMemoryValues.State = PointerState.DerefInt(0x130);
+            gameMemoryValues.IsRunning = PointerState.DerefByte(0x130) != 0x00;
+            gameMemoryValues.IsCutscene = PointerState.DerefByte(0x131) != 0x00;
+            gameMemoryValues.IsMenu = PointerState.DerefByte(0x132) != 0x00;
+            gameMemoryValues.IsPaused = PointerState.DerefByte(0x133) != 0x00;
 
             // IGT
             gameMemoryValues.IGTRunningTimer = PointerIGT.DerefLong(0x18);
