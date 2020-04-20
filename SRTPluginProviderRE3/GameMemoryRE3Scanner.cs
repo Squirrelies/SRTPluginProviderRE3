@@ -71,7 +71,7 @@ namespace SRTPluginProviderRE3
             for (long i = 0; i < PointerInventoryEntries.Length; ++i)
                 PointerInventoryEntries[i] = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressInventory, 0x50L, 0x98L, 0x10L, 0x20L + (i * 0x08L), 0x18L);
 
-            PointerDeathCount = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDeathCount, 0xA8L, 0x70L, 0x230L);
+            PointerDeathCount = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDeathCount);
             PointerDifficulty = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDifficulty, 0x20L, 0x50L);
         }
 
@@ -86,7 +86,7 @@ namespace SRTPluginProviderRE3
             pointerAddressHP = 0x08D7C5E8;
             pointerAddressInventory = 0x08D7C5E8;
             pointerAddressEnemy = 0x08D7A5A8;
-            pointerAddressDeathCount = 0x08D783B0;
+            pointerAddressDeathCount = 0x08DA66F0;
             pointerAddressDifficulty = 0x08D7B548;
         }
 
@@ -197,7 +197,7 @@ namespace SRTPluginProviderRE3
             }
 
             // Other stats and info.
-            gameMemoryValues.PlayerDeathCount = PointerDeathCount.DerefInt(0x18);
+            gameMemoryValues.PlayerDeathCount = PointerDeathCount.DerefInt(0xC0);
             gameMemoryValues.Difficulty = PointerDifficulty.DerefInt(0x78);
 
             HasScanned = true;
