@@ -7,6 +7,7 @@ namespace SRTPluginProviderRE3
 {
     public class SRTPluginProviderRE3 : IPluginProvider
     {
+        private int? processId;
         private GameMemoryRE3Scanner gameMemoryScanner;
         private Stopwatch stopwatch;
         private IPluginHostDelegates hostDelegates;
@@ -15,7 +16,8 @@ namespace SRTPluginProviderRE3
         public int Startup(IPluginHostDelegates hostDelegates)
         {
             this.hostDelegates = hostDelegates;
-            gameMemoryScanner = new GameMemoryRE3Scanner(Process.GetProcessesByName("re3").First().Id);
+            processId = Process.GetProcessesByName("re3")?.FirstOrDefault()?.Id;
+            gameMemoryScanner = new GameMemoryRE3Scanner(processId);
             stopwatch = new Stopwatch();
             stopwatch.Start();
             return 0;
@@ -36,9 +38,17 @@ namespace SRTPluginProviderRE3
             {
                 if (!gameMemoryScanner.ProcessRunning)
                 {
-                    hostDelegates.Exit();
-                    stopwatch.Restart();
-                    return null;
+                    //hostDelegates.Exit();
+
+                    processId = GetProcessId();
+                    if (processId != null)
+                        gameMemoryScanner.Initialize(processId.Value); // Re-initialize and attempt to continue.
+                    
+                    if (!gameMemoryScanner.ProcessRunning)
+                    { // Still not running? Restart the timer and return null until the program is running.
+                        stopwatch.Restart();
+                        return null;
+                    }
                 }
 
                 if (stopwatch.ElapsedMilliseconds >= 2000L)
@@ -54,5 +64,7 @@ namespace SRTPluginProviderRE3
                 return null;
             }
         }
+
+        private int? GetProcessId() => Process.GetProcessesByName("re3")?.FirstOrDefault()?.Id;
     }
 }

@@ -10,8 +10,8 @@ namespace SRTPluginProviderRE3
         private ProcessMemory.ProcessMemory memoryAccess;
         private GameMemoryRE3 gameMemoryValues;
         public bool HasScanned;
-        public bool ProcessRunning => memoryAccess.ProcessRunning;
-        public int ProcessExitCode => memoryAccess.ProcessExitCode;
+        public bool ProcessRunning => memoryAccess != null && memoryAccess.ProcessRunning;
+        public int ProcessExitCode => (memoryAccess != null) ? memoryAccess.ProcessExitCode : 0;
         private int EnemyTableCount;
 
         // Pointer Address Variables
@@ -47,32 +47,41 @@ namespace SRTPluginProviderRE3
         /// 
         /// </summary>
         /// <param name="proc"></param>
-        internal GameMemoryRE3Scanner(int pid)
+        internal GameMemoryRE3Scanner(int? pid = null)
         {
             gameMemoryValues = new GameMemoryRE3();
-            memoryAccess = new ProcessMemory.ProcessMemory(pid);
-            BaseAddress = NativeWrappers.GetProcessBaseAddress(pid, PInvoke.ListModules.LIST_MODULES_64BIT).ToInt64(); // Bypass .NET's managed solution for getting this and attempt to get this info ourselves via PInvoke since some users are getting 299 PARTIAL COPY when they seemingly shouldn't.
             SelectPointerAddresses();
+            if (pid != null)
+                Initialize(pid.Value);
+        }
 
-            // Setup the pointers.
-            PointerIGT = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressIGT, 0x60L);
-            PointerRank = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressRank);
-            PointerSaves = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressSaves, 0x198L);
-            PointerMapID = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressMapID);
-            PointerFrameDelta = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressFrameDelta);
-            PointerState = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressState);
-            PointerPlayerHP = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressHP, 0x50L, 0x20L);
+        internal void Initialize(int pid)
+        {
+            memoryAccess = new ProcessMemory.ProcessMemory(pid);
+            if (ProcessRunning)
+            {
+                BaseAddress = NativeWrappers.GetProcessBaseAddress(pid, PInvoke.ListModules.LIST_MODULES_64BIT).ToInt64(); // Bypass .NET's managed solution for getting this and attempt to get this info ourselves via PInvoke since some users are getting 299 PARTIAL COPY when they seemingly shouldn't.
 
-            PointerEnemyEntryCount = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressEnemy, 0x30L);
-            GenerateEnemyEntries();
+                // Setup the pointers.
+                PointerIGT = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressIGT, 0x60L);
+                PointerRank = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressRank);
+                PointerSaves = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressSaves, 0x198L);
+                PointerMapID = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressMapID);
+                PointerFrameDelta = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressFrameDelta);
+                PointerState = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressState);
+                PointerPlayerHP = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressHP, 0x50L, 0x20L);
 
-            PointerInventoryCount = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressInventory, 0x50L);
-            PointerInventoryEntries = new MultilevelPointer[20];
-            for (long i = 0; i < PointerInventoryEntries.Length; ++i)
-                PointerInventoryEntries[i] = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressInventory, 0x50L, 0x98L, 0x10L, 0x20L + (i * 0x08L), 0x18L);
+                PointerEnemyEntryCount = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressEnemy, 0x30L);
+                GenerateEnemyEntries();
 
-            PointerDeathCount = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDeathCount);
-            PointerDifficulty = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDifficulty, 0x20L, 0x50L);
+                PointerInventoryCount = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressInventory, 0x50L);
+                PointerInventoryEntries = new MultilevelPointer[20];
+                for (long i = 0; i < PointerInventoryEntries.Length; ++i)
+                    PointerInventoryEntries[i] = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressInventory, 0x50L, 0x98L, 0x10L, 0x20L + (i * 0x08L), 0x18L);
+
+                PointerDeathCount = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDeathCount);
+                PointerDifficulty = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDifficulty, 0x20L, 0x50L);
+            }
         }
 
         private void SelectPointerAddresses()
