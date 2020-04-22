@@ -1,5 +1,6 @@
 ﻿using SRTPluginBase;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 
@@ -43,7 +44,7 @@ namespace SRTPluginProviderRE3
                     processId = GetProcessId();
                     if (processId != null)
                         gameMemoryScanner.Initialize(processId.Value); // Re-initialize and attempt to continue.
-                    
+
                     if (!gameMemoryScanner.ProcessRunning)
                     { // Still not running? Restart the timer and return null until the program is running.
                         stopwatch.Restart();
@@ -58,9 +59,16 @@ namespace SRTPluginProviderRE3
                 }
                 return gameMemoryScanner.Refresh();
             }
+            catch (Win32Exception ex)
+            {
+                if ((ProcessMemory.Win32Error)ex.NativeErrorCode != ProcessMemory.Win32Error.ERROR_PARTIAL_COPY)
+                    hostDelegates.ExceptionMessage(ex);// Only show the error if its not ERROR_PARTIAL_COPY. ERROR_PARTIAL_COPY is typically an issue with reading as the program exits or reading right as the pointers are changing (i.e. switching back to main menu).
+
+                return null;
+            }
             catch (Exception ex)
             {
-                hostDelegates.OutputMessage("[{0}] {1} {2}", ex.GetType().Name, ex.Message, ex.StackTrace);
+                hostDelegates.ExceptionMessage(ex);
                 return null;
             }
         }
