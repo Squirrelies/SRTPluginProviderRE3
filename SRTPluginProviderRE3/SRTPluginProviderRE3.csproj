@@ -5,7 +5,7 @@
     <Platforms>x64</Platforms>
     <!-- netcoreapp3.1 had to be hardcoded here because this project reports $(TargetFramework) as netstandard2.0 (rightfully so) and I am not sure how this project's csproj can auto-detect another project's framework version to copy it to the appropriate folder so we're just... hardcoding this. -->
     <CopyDestionationPath>$(SolutionDir)..\SRTHost\SRTHost\bin\$(Platform)\$(Configuration)\netcoreapp3.1\plugins</CopyDestionationPath>
-    <Version>2.0.4</Version>
+    <Version>2.0.5</Version>
     <Authors>Travis J Gutjahr</Authors>
     <Company>Travis J Gutjahr</Company>
     <Copyright>Copyright © 2020 Travis J Gutjahr</Copyright>
@@ -21,7 +21,7 @@
     <Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(CopyDestionationPath)\$(ProjectName)\%(RecursiveDir)" OverwriteReadOnlyFiles="true"></Copy>
   </Target>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(BuildingInsideVisualStudio)' == '' Or '$(BuildingInsideVisualStudio)' == 'true'">
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(BuildingInsideVisualStudio)' == 'true' And '$(TJGutjahr)' == 'true'">
     <Exec Command="&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe&quot; sign /tr &quot;http://timestamp.digicert.com&quot; /td SHA1 /n &quot;Travis J Gutjahr&quot; /sm /fd SHA1 &quot;$(TargetDir)\$(ProjectName).dll&quot;&#xD;&#xA;&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe&quot; sign /tr &quot;http://timestamp.digicert.com&quot; /td SHA256 /n &quot;Travis J Gutjahr&quot; /sm /fd SHA256 /as &quot;$(TargetDir)\$(ProjectName).dll&quot;&#xD;&#xA;&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe&quot; sign /tr &quot;http://timestamp.digicert.com&quot; /td SHA512 /n &quot;Travis J Gutjahr&quot; /sm /fd SHA512 /as &quot;$(TargetDir)\$(ProjectName).dll&quot;&#xD;&#xA;" />
   </Target>
 
