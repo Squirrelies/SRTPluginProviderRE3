@@ -13,11 +13,26 @@ namespace SRTPluginProviderRE3
         private Stopwatch stopwatch;
         private IPluginHostDelegates hostDelegates;
         public IPluginInfo Info => new PluginInfo();
+        //public bool GameRunning => gameMemoryScanner != null && gameMemoryScanner.ProcessRunning;
+        public bool GameRunning
+        {
+            get
+            {
+                if (gameMemoryScanner != null && !gameMemoryScanner.ProcessRunning)
+                {
+                    processId = GetProcessId();
+                    if (processId != null)
+                        gameMemoryScanner.Initialize(processId.Value); // Re-initialize and attempt to continue.
+                }
+
+                return gameMemoryScanner != null && gameMemoryScanner.ProcessRunning;
+            }
+        }
 
         public int Startup(IPluginHostDelegates hostDelegates)
         {
             this.hostDelegates = hostDelegates;
-            processId = Process.GetProcessesByName("re3")?.FirstOrDefault()?.Id;
+            processId = GetProcessId();
             gameMemoryScanner = new GameMemoryRE3Scanner(processId);
             stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -37,20 +52,8 @@ namespace SRTPluginProviderRE3
         {
             try
             {
-                if (!gameMemoryScanner.ProcessRunning)
-                {
-                    //hostDelegates.Exit();
-
-                    processId = GetProcessId();
-                    if (processId != null)
-                        gameMemoryScanner.Initialize(processId.Value); // Re-initialize and attempt to continue.
-
-                    if (!gameMemoryScanner.ProcessRunning)
-                    { // Still not running? Restart the timer and return null until the program is running.
-                        stopwatch.Restart();
+                if (!GameRunning) // Not running? Bail out!
                         return null;
-                    }
-                }
 
                 if (stopwatch.ElapsedMilliseconds >= 2000L)
                 {
