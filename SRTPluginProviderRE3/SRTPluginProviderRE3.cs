@@ -13,7 +13,6 @@ namespace SRTPluginProviderRE3
         private Stopwatch stopwatch;
         private IPluginHostDelegates hostDelegates;
         public IPluginInfo Info => new PluginInfo();
-        //public bool GameRunning => gameMemoryScanner != null && gameMemoryScanner.ProcessRunning;
         public bool GameRunning
         {
             get

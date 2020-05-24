@@ -11,7 +11,7 @@ namespace SRTPluginProviderRE3
 
         public string Author => "Squirrelies";
 
-        public Uri MoreInfoURL => new Uri("https://github.com/Squirrelies");
+        public Uri MoreInfoURL => new Uri("https://github.com/Squirrelies/SRTPluginProviderRE3");
 
         public int VersionMajor => assemblyVersion.Major;
 
