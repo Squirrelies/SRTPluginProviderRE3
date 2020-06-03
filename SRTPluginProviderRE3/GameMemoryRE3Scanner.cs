@@ -25,7 +25,7 @@ namespace SRTPluginProviderRE3
         private long pointerAddressInventory;
         private long pointerAddressEnemy;
         private long pointerAddressDeathCount; //
-        private long pointerAddressDifficulty; //
+        //private long pointerAddressDifficulty; //
 
         // Pointer Classes
         private long BaseAddress { get; set; }
@@ -41,7 +41,7 @@ namespace SRTPluginProviderRE3
         private MultilevelPointer[] PointerInventoryEntries { get; set; }
         private MultilevelPointer PointerInventoryCount { get; set; }
         private MultilevelPointer PointerDeathCount { get; set; }
-        private MultilevelPointer PointerDifficulty { get; set; }
+        //private MultilevelPointer PointerDifficulty { get; set; }
 
         /// <summary>
         /// 
@@ -80,23 +80,23 @@ namespace SRTPluginProviderRE3
                     PointerInventoryEntries[i] = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressInventory, 0x50L, 0x98L, 0x10L, 0x20L + (i * 0x08L), 0x18L);
 
                 PointerDeathCount = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDeathCount);
-                PointerDifficulty = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDifficulty, 0x20L, 0x50L);
+                //PointerDifficulty = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDifficulty, 0x20L, 0x50L);
             }
         }
 
         private void SelectPointerAddresses()
         {
-            pointerAddressIGT = 0x08DAA3F0;
-            pointerAddressRank = 0x08D78258;
-            pointerAddressSaves = 0x08DA66F0;
-            pointerAddressMapID = 0x054DB0F8;
-            pointerAddressFrameDelta = 0x08CDD490;
-            pointerAddressState = 0x08DAFA70;
-            pointerAddressHP = 0x08D7C5E8;
-            pointerAddressInventory = 0x08D7C5E8;
-            pointerAddressEnemy = 0x08D7A5A8;
-            pointerAddressDeathCount = 0x08DA66F0;
-            pointerAddressDifficulty = 0x08D7B548;
+            pointerAddressIGT = 0x08CE8430;
+            pointerAddressRank = 0x08CB62A8;
+            pointerAddressSaves = 0x08CE4720;
+            pointerAddressMapID = 0x054190F8;
+            pointerAddressFrameDelta = 0x08C1B4D0;
+            pointerAddressState = 0x08CEDA98;
+            pointerAddressHP = 0x08CBA618;
+            pointerAddressInventory = 0x08CBA618;
+            pointerAddressEnemy = 0x08CB8618;
+            pointerAddressDeathCount = 0x08CE4720;
+            //pointerAddressDifficulty = 0x08D7B548; // !
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace SRTPluginProviderRE3
                 PointerInventoryEntries[i].UpdatePointers();
 
             PointerDeathCount.UpdatePointers();
-            PointerDifficulty.UpdatePointers();
+            //PointerDifficulty.UpdatePointers();
         }
 
         internal IGameMemoryRE3 Refresh()
@@ -214,7 +214,8 @@ namespace SRTPluginProviderRE3
 
             // Other stats and info.
             gameMemoryValues.PlayerDeathCount = PointerDeathCount.DerefInt(0xC0);
-            gameMemoryValues.Difficulty = PointerDifficulty.DerefInt(0x78);
+            //gameMemoryValues.Difficulty = PointerDifficulty.DerefInt(0x78);
+            gameMemoryValues.Difficulty = 1;
 
             HasScanned = true;
             return gameMemoryValues;

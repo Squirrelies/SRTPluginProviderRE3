@@ -13,14 +13,14 @@ namespace SRTPluginProviderRE3
 
         public Uri MoreInfoURL => new Uri("https://github.com/Squirrelies/SRTPluginProviderRE3");
 
-        public int VersionMajor => assemblyVersion.Major;
+        public int VersionMajor => assemblyFileVersion.ProductMajorPart;
 
-        public int VersionMinor => assemblyVersion.Minor;
+        public int VersionMinor => assemblyFileVersion.ProductMinorPart;
 
-        public int VersionBuild => assemblyVersion.Build;
+        public int VersionBuild => assemblyFileVersion.ProductBuildPart;
 
-        public int VersionRevision => assemblyVersion.Revision;
+        public int VersionRevision => assemblyFileVersion.ProductPrivatePart;
 
-        private Version assemblyVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+        private System.Diagnostics.FileVersionInfo assemblyFileVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
     }
 }
