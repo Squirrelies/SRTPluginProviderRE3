@@ -8,7 +8,7 @@ namespace SRTPluginProviderRE3
 {
     public class SRTPluginProviderRE3 : IPluginProvider
     {
-        private int? processId;
+        private Process process;
         private GameMemoryRE3Scanner gameMemoryScanner;
         private Stopwatch stopwatch;
         private IPluginHostDelegates hostDelegates;
@@ -19,9 +19,9 @@ namespace SRTPluginProviderRE3
             {
                 if (gameMemoryScanner != null && !gameMemoryScanner.ProcessRunning)
                 {
-                    processId = GetProcessId();
-                    if (processId != null)
-                        gameMemoryScanner.Initialize(processId.Value); // Re-initialize and attempt to continue.
+                    process = GetProcess();
+                    if (process != null)
+                        gameMemoryScanner.Initialize(process); // Re-initialize and attempt to continue.
                 }
 
                 return gameMemoryScanner != null && gameMemoryScanner.ProcessRunning;
@@ -31,8 +31,8 @@ namespace SRTPluginProviderRE3
         public int Startup(IPluginHostDelegates hostDelegates)
         {
             this.hostDelegates = hostDelegates;
-            processId = GetProcessId();
-            gameMemoryScanner = new GameMemoryRE3Scanner(processId);
+            process = GetProcess();
+            gameMemoryScanner = new GameMemoryRE3Scanner(process);
             stopwatch = new Stopwatch();
             stopwatch.Start();
             return 0;
@@ -75,6 +75,6 @@ namespace SRTPluginProviderRE3
             }
         }
 
-        private int? GetProcessId() => Process.GetProcessesByName("re3")?.FirstOrDefault()?.Id;
+        private Process GetProcess() => Process.GetProcessesByName("re3")?.FirstOrDefault();
     }
 }

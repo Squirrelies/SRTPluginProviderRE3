@@ -2,16 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <Platforms>x64</Platforms>
-    <!-- netcoreapp3.1 had to be hardcoded here because this project reports $(TargetFramework) as netstandard2.0 (rightfully so) and I am not sure how this project's csproj can auto-detect another project's framework version to copy it to the appropriate folder so we're just... hardcoding this. -->
-    <CopyDestionationPath>$(SolutionDir)..\SRTHost\SRTHost\bin\$(Platform)\$(Configuration)\netcoreapp3.1\plugins</CopyDestionationPath>
-    <Version>2.1.1</Version>
     <Authors>Travis J Gutjahr</Authors>
     <Company>Travis J Gutjahr</Company>
     <Copyright>Copyright © 2020 Travis J Gutjahr</Copyright>
     <Product>Resident Evil 3 (2020) Memory Provider Plugin</Product>
     <Description>A provider plugin for the SRT Host to provide memory values to other plugins.</Description>
+    <Version>2.1.2</Version>
+    <FileVersion>2.1.2.0</FileVersion>
     <AssemblyVersion>2.1.0.0</AssemblyVersion>
+    <!-- netcoreapp3.1 had to be hardcoded here because this project reports $(TargetFramework) as netstandard2.0 (rightfully so) and I am not sure how this project's csproj can auto-detect another project's framework version to copy it to the appropriate folder so we're just... hardcoding this. -->
+    <CopyDestionationPath>$(SolutionDir)..\SRTHost\SRTHost\bin\$(Platform)\$(Configuration)\netcoreapp3.1\plugins</CopyDestionationPath>
   </PropertyGroup>
 
   <Target Name="CopyOutputToDestination" AfterTargets="AfterBuild">

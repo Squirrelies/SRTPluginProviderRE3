@@ -1,6 +1,7 @@
 ﻿using ProcessMemory;
 using SRTPluginProviderRE3.Structures;
 using System;
+using System.Diagnostics;
 
 namespace SRTPluginProviderRE3
 {
@@ -24,8 +25,8 @@ namespace SRTPluginProviderRE3
         private long pointerAddressHP;
         private long pointerAddressInventory;
         private long pointerAddressEnemy;
-        private long pointerAddressDeathCount; //
-        //private long pointerAddressDifficulty; //
+        private long pointerAddressDeathCount;
+        private long pointerAddressDifficulty;
 
         // Pointer Classes
         private long BaseAddress { get; set; }
@@ -41,22 +42,28 @@ namespace SRTPluginProviderRE3
         private MultilevelPointer[] PointerInventoryEntries { get; set; }
         private MultilevelPointer PointerInventoryCount { get; set; }
         private MultilevelPointer PointerDeathCount { get; set; }
-        //private MultilevelPointer PointerDifficulty { get; set; }
+        private MultilevelPointer PointerDifficulty { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="proc"></param>
-        internal GameMemoryRE3Scanner(int? pid = null)
+        internal GameMemoryRE3Scanner(Process process = null)
         {
             gameMemoryValues = new GameMemoryRE3();
-            SelectPointerAddresses();
-            if (pid != null)
-                Initialize(pid.Value);
+            if (process != null)
+                Initialize(process);
         }
 
-        internal void Initialize(int pid)
+        internal void Initialize(Process process)
         {
+            if (process == null)
+                return; // Do not continue if this is null.
+
+            if (!SelectPointerAddresses(GameHashes.DetectVersion(process.MainModule.FileName)))
+                return; // Unknown version.
+
+            int pid = GetProcessId(process).Value;
             memoryAccess = new ProcessMemory.ProcessMemory(pid);
             if (ProcessRunning)
             {
@@ -80,23 +87,51 @@ namespace SRTPluginProviderRE3
                     PointerInventoryEntries[i] = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressInventory, 0x50L, 0x98L, 0x10L, 0x20L + (i * 0x08L), 0x18L);
 
                 PointerDeathCount = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDeathCount);
-                //PointerDifficulty = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDifficulty, 0x20L, 0x50L);
+                PointerDifficulty = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDifficulty, 0x20L, 0x50L);
             }
         }
 
-        private void SelectPointerAddresses()
+        private bool SelectPointerAddresses(GameVersion version)
         {
-            pointerAddressIGT = 0x08CE8430;
-            pointerAddressRank = 0x08CB62A8;
-            pointerAddressSaves = 0x08CE4720;
-            pointerAddressMapID = 0x054190F8;
-            pointerAddressFrameDelta = 0x08C1B4D0;
-            pointerAddressState = 0x08CEDA98;
-            pointerAddressHP = 0x08CBA618;
-            pointerAddressInventory = 0x08CBA618;
-            pointerAddressEnemy = 0x08CB8618;
-            pointerAddressDeathCount = 0x08CE4720;
-            //pointerAddressDifficulty = 0x08D7B548; // !
+            switch (version)
+            {
+                case GameVersion.RE3_WW_20200603_1:
+                    {
+                        pointerAddressFrameDelta = 0x08C1B4D0;
+                        pointerAddressMapID = 0x054190F8;
+                        pointerAddressSaves = 0x08CE4720;
+                        pointerAddressDeathCount = 0x08CE4720;
+                        pointerAddressDifficulty = 0x08CB9598;
+                        pointerAddressState = 0x08CEDA98;
+                        pointerAddressIGT = 0x08CE8430;
+                        pointerAddressRank = 0x08CB62A8;
+                        pointerAddressHP = 0x08CBA618;
+                        pointerAddressInventory = 0x08CBA618;
+                        pointerAddressEnemy = 0x08CB8618;
+
+                        return true;
+                    }
+
+                case GameVersion.BIO3_CEROZ_20200603_1:
+                    {
+                        pointerAddressFrameDelta = 0x08CDD490;
+                        pointerAddressMapID = 0x054DB0F8;
+                        pointerAddressSaves = 0x08DA66F0;
+                        pointerAddressDeathCount = 0x08DA66F0;
+                        pointerAddressDifficulty = 0x08D7B548;
+                        pointerAddressState = 0x08DAFA70;
+                        pointerAddressIGT = 0x08DAA3F0;
+                        pointerAddressRank = 0x08D78258;
+                        pointerAddressHP = 0x08D7C5E8;
+                        pointerAddressInventory = 0x08D7C5E8;
+                        pointerAddressEnemy = 0x08D7A5A8;
+
+                        return true;
+                    }
+            }
+
+            // If we made it this far... rest in pepperonis. We have failed to detect any of the correct versions we support and have no idea what pointer addresses to use. Bail out.
+            return false;
         }
 
         /// <summary>
@@ -136,7 +171,7 @@ namespace SRTPluginProviderRE3
                 PointerInventoryEntries[i].UpdatePointers();
 
             PointerDeathCount.UpdatePointers();
-            //PointerDifficulty.UpdatePointers();
+            PointerDifficulty.UpdatePointers();
         }
 
         internal IGameMemoryRE3 Refresh()
@@ -214,12 +249,13 @@ namespace SRTPluginProviderRE3
 
             // Other stats and info.
             gameMemoryValues.PlayerDeathCount = PointerDeathCount.DerefInt(0xC0);
-            //gameMemoryValues.Difficulty = PointerDifficulty.DerefInt(0x78);
-            gameMemoryValues.Difficulty = 1;
+            gameMemoryValues.Difficulty = PointerDifficulty.DerefInt(0x78);
 
             HasScanned = true;
             return gameMemoryValues;
         }
+
+        private int? GetProcessId(Process process) => process?.Id;
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
