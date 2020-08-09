@@ -98,7 +98,7 @@ namespace SRTPluginProviderRE3
                 case GameVersion.RE3_WW_20200806_1:
                     {
                         pointerAddressFrameDelta = 0x08CEA790;
-                        pointerAddressMapID = 0x08DB9B98;
+                        pointerAddressMapID = 0x054E30F8;
                         pointerAddressSaves = 0x08DB3BB0;
                         pointerAddressDeathCount = 0x08DB3BB0;
                         pointerAddressDifficulty = 0x08D88C60;
@@ -115,7 +115,7 @@ namespace SRTPluginProviderRE3
                 case GameVersion.BIO3_CEROZ_20200806_1:
                     {
                         pointerAddressFrameDelta = 0x08CEA790;
-                        pointerAddressMapID = 0x08DB9B98;
+                        pointerAddressMapID = 0x054E30F8;
                         pointerAddressSaves = 0x08DB3BB0;
                         pointerAddressDeathCount = 0x08DB3BB0;
                         pointerAddressDifficulty = 0x08D88C60;
