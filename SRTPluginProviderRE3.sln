@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SRTPluginProviderRE3", "SRT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SRTPluginBase", "..\SRTHost\SRTPluginBase\SRTPluginBase.csproj", "{431972BA-04CE-4D4B-8ECE-80D351B02868}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessMemory", "..\ProcessMemory\ProcessMemory\ProcessMemory.csproj", "{CEEA3B1C-B7C3-408F-95E4-768288DC4E70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessMemory.Common", "..\ProcessMemory\ProcessMemory.Common\ProcessMemory.Common.csproj", "{A49BF2AD-8257-45AC-894F-D74947E75EAF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessMemory.x64", "..\ProcessMemory\ProcessMemory.x64\ProcessMemory.x64.csproj", "{9930F651-4409-4941-B91C-E799B454A0F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +21,18 @@ Global
 		{FB803174-8A74-4CC0-8645-B1D6C4F53288}.Debug|x64.Build.0 = Debug|x64
 		{FB803174-8A74-4CC0-8645-B1D6C4F53288}.Release|x64.ActiveCfg = Release|x64
 		{FB803174-8A74-4CC0-8645-B1D6C4F53288}.Release|x64.Build.0 = Release|x64
-		{431972BA-04CE-4D4B-8ECE-80D351B02868}.Debug|x64.ActiveCfg = Debug|x64
-		{431972BA-04CE-4D4B-8ECE-80D351B02868}.Debug|x64.Build.0 = Debug|x64
-		{431972BA-04CE-4D4B-8ECE-80D351B02868}.Release|x64.ActiveCfg = Release|x64
-		{431972BA-04CE-4D4B-8ECE-80D351B02868}.Release|x64.Build.0 = Release|x64
-		{CEEA3B1C-B7C3-408F-95E4-768288DC4E70}.Debug|x64.ActiveCfg = Debug|x64
-		{CEEA3B1C-B7C3-408F-95E4-768288DC4E70}.Debug|x64.Build.0 = Debug|x64
-		{CEEA3B1C-B7C3-408F-95E4-768288DC4E70}.Release|x64.ActiveCfg = Release|x64
-		{CEEA3B1C-B7C3-408F-95E4-768288DC4E70}.Release|x64.Build.0 = Release|x64
+		{431972BA-04CE-4D4B-8ECE-80D351B02868}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{431972BA-04CE-4D4B-8ECE-80D351B02868}.Debug|x64.Build.0 = Debug|Any CPU
+		{431972BA-04CE-4D4B-8ECE-80D351B02868}.Release|x64.ActiveCfg = Release|Any CPU
+		{431972BA-04CE-4D4B-8ECE-80D351B02868}.Release|x64.Build.0 = Release|Any CPU
+		{A49BF2AD-8257-45AC-894F-D74947E75EAF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A49BF2AD-8257-45AC-894F-D74947E75EAF}.Debug|x64.Build.0 = Debug|Any CPU
+		{A49BF2AD-8257-45AC-894F-D74947E75EAF}.Release|x64.ActiveCfg = Release|Any CPU
+		{A49BF2AD-8257-45AC-894F-D74947E75EAF}.Release|x64.Build.0 = Release|Any CPU
+		{9930F651-4409-4941-B91C-E799B454A0F4}.Debug|x64.ActiveCfg = Debug|x64
+		{9930F651-4409-4941-B91C-E799B454A0F4}.Debug|x64.Build.0 = Debug|x64
+		{9930F651-4409-4941-B91C-E799B454A0F4}.Release|x64.ActiveCfg = Release|x64
+		{9930F651-4409-4941-B91C-E799B454A0F4}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

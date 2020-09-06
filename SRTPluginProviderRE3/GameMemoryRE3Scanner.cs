@@ -1,4 +1,5 @@
-﻿using ProcessMemory;
+﻿using ProcessMemory.x64;
+using static ProcessMemory.Common.Extensions;
 using SRTPluginProviderRE3.Structures;
 using System;
 using System.Diagnostics;
@@ -8,7 +9,7 @@ namespace SRTPluginProviderRE3
     internal class GameMemoryRE3Scanner : IDisposable
     {
         // Variables
-        private ProcessMemory.ProcessMemory memoryAccess;
+        private ProcessMemoryHandler memoryAccess;
         private GameMemoryRE3 gameMemoryValues;
         public bool HasScanned;
         public bool ProcessRunning => memoryAccess != null && memoryAccess.ProcessRunning;
@@ -16,20 +17,20 @@ namespace SRTPluginProviderRE3
         private int EnemyTableCount;
 
         // Pointer Address Variables
-        private long pointerAddressIGT;
-        private long pointerAddressRank;
-        private long pointerAddressSaves;
-        private long pointerAddressMapID;
-        private long pointerAddressFrameDelta;
-        private long pointerAddressState;
-        private long pointerAddressHP;
-        private long pointerAddressInventory;
-        private long pointerAddressEnemy;
-        private long pointerAddressDeathCount;
-        private long pointerAddressDifficulty;
+        private int pointerAddressIGT;
+        private int pointerAddressRank;
+        private int pointerAddressSaves;
+        private int pointerAddressMapID;
+        private int pointerAddressFrameDelta;
+        private int pointerAddressState;
+        private int pointerAddressHP;
+        private int pointerAddressInventory;
+        private int pointerAddressEnemy;
+        private int pointerAddressDeathCount;
+        private int pointerAddressDifficulty;
 
         // Pointer Classes
-        private long BaseAddress { get; set; }
+        private IntPtr BaseAddress { get; set; }
         private MultilevelPointer PointerIGT { get; set; }
         private MultilevelPointer PointerRank { get; set; }
         private MultilevelPointer PointerSaves { get; set; }
@@ -64,30 +65,30 @@ namespace SRTPluginProviderRE3
                 return; // Unknown version.
 
             int pid = GetProcessId(process).Value;
-            memoryAccess = new ProcessMemory.ProcessMemory(pid);
+            memoryAccess = new ProcessMemoryHandler(pid);
             if (ProcessRunning)
             {
-                BaseAddress = NativeWrappers.GetProcessBaseAddress(pid, PInvoke.ListModules.LIST_MODULES_64BIT).ToInt64(); // Bypass .NET's managed solution for getting this and attempt to get this info ourselves via PInvoke since some users are getting 299 PARTIAL COPY when they seemingly shouldn't.
+                BaseAddress = ProcessMemory.Common.NativeWrappers.GetProcessBaseAddress(pid, ProcessMemory.Common.PInvoke.ListModules.LIST_MODULES_64BIT); // Bypass .NET's managed solution for getting this and attempt to get this info ourselves via PInvoke since some users are getting 299 PARTIAL COPY when they seemingly shouldn't.
 
                 // Setup the pointers.
-                PointerIGT = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressIGT, 0x60L);
-                PointerRank = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressRank);
-                PointerSaves = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressSaves, 0x198L);
-                PointerMapID = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressMapID);
-                PointerFrameDelta = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressFrameDelta);
-                PointerState = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressState);
-                PointerPlayerHP = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressHP, 0x50L, 0x20L);
+                PointerIGT = new MultilevelPointer(memoryAccess, IntPtr.Add(BaseAddress, pointerAddressIGT), 0x60);
+                PointerRank = new MultilevelPointer(memoryAccess, IntPtr.Add(BaseAddress, pointerAddressRank));
+                PointerSaves = new MultilevelPointer(memoryAccess, IntPtr.Add(BaseAddress, pointerAddressSaves), 0x198);
+                PointerMapID = new MultilevelPointer(memoryAccess, IntPtr.Add(BaseAddress, pointerAddressMapID));
+                PointerFrameDelta = new MultilevelPointer(memoryAccess, IntPtr.Add(BaseAddress, pointerAddressFrameDelta));
+                PointerState = new MultilevelPointer(memoryAccess, IntPtr.Add(BaseAddress, pointerAddressState));
+                PointerPlayerHP = new MultilevelPointer(memoryAccess, IntPtr.Add(BaseAddress, pointerAddressHP), 0x50, 0x20);
 
-                PointerEnemyEntryCount = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressEnemy, 0x30L);
+                PointerEnemyEntryCount = new MultilevelPointer(memoryAccess, IntPtr.Add(BaseAddress, pointerAddressEnemy), 0x30);
                 GenerateEnemyEntries();
 
-                PointerInventoryCount = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressInventory, 0x50L);
+                PointerInventoryCount = new MultilevelPointer(memoryAccess, IntPtr.Add(BaseAddress, pointerAddressInventory), 0x50);
                 PointerInventoryEntries = new MultilevelPointer[20];
-                for (long i = 0; i < PointerInventoryEntries.Length; ++i)
-                    PointerInventoryEntries[i] = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressInventory, 0x50L, 0x98L, 0x10L, 0x20L + (i * 0x08L), 0x18L);
+                for (int i = 0; i < PointerInventoryEntries.Length; ++i)
+                    PointerInventoryEntries[i] = new MultilevelPointer(memoryAccess, IntPtr.Add(BaseAddress, pointerAddressInventory), 0x50, 0x98, 0x10, 0x20 + (i * 0x08), 0x18);
 
-                PointerDeathCount = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDeathCount);
-                PointerDifficulty = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressDifficulty, 0x20L, 0x50L);
+                PointerDeathCount = new MultilevelPointer(memoryAccess, IntPtr.Add(BaseAddress, pointerAddressDeathCount));
+                PointerDifficulty = new MultilevelPointer(memoryAccess, IntPtr.Add(BaseAddress, pointerAddressDifficulty), 0x20, 0x50);
             }
         }
 
@@ -173,12 +174,12 @@ namespace SRTPluginProviderRE3
         /// </summary>
         private void GenerateEnemyEntries()
         {
-            EnemyTableCount = PointerEnemyEntryCount.DerefInt(0x1CL); // Get the size of the enemy pointer table. This seems to double (4, 8, 16, 32, ...) but never decreases, even after a new game is started.
+            EnemyTableCount = PointerEnemyEntryCount.DerefInt(0x1C); // Get the size of the enemy pointer table. This seems to double (4, 8, 16, 32, ...) but never decreases, even after a new game is started.
             if (PointerEnemyEntries == null || PointerEnemyEntries.Length != EnemyTableCount) // Enter if the pointer table is null (first run) or the size does not match.
             {
                 PointerEnemyEntries = new MultilevelPointer[EnemyTableCount]; // Create a new enemy pointer table array with the detected size.
-                for (long i = 0; i < PointerEnemyEntries.Length; ++i) // Loop through and create all of the pointers for the table.
-                    PointerEnemyEntries[i] = new MultilevelPointer(memoryAccess, BaseAddress + pointerAddressEnemy, 0x30L, 0x20L + (i * 0x08L), 0x300L);
+                for (int i = 0; i < PointerEnemyEntries.Length; ++i) // Loop through and create all of the pointers for the table.
+                    PointerEnemyEntries[i] = new MultilevelPointer(memoryAccess, IntPtr.Add(BaseAddress, pointerAddressEnemy), 0x30, 0x20 + (i * 0x08), 0x300);
             }
         }
 
@@ -269,7 +270,7 @@ namespace SRTPluginProviderRE3
                 {
                     try
                     {
-                        long invDataOffset = PointerInventoryEntries[i].DerefLong(0x10) - PointerInventoryEntries[i].Address;
+                        int invDataOffset = (int)(PointerInventoryEntries[i].DerefLong(0x10) - PointerInventoryEntries[i].Address.ToInt64());
                         gameMemoryValues.PlayerInventory[i].SetValues(PointerInventoryEntries[i].DerefInt(0x28), PointerInventoryEntries[i].DerefByteArray(invDataOffset + 0x10, 0x14));
                     }
                     catch
