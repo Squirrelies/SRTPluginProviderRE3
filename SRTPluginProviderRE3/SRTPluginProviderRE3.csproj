@@ -31,7 +31,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\ProcessMemory\ProcessMemory.Common\ProcessMemory.Common.csproj" />
     <ProjectReference Include="..\..\ProcessMemory\ProcessMemory.x64\ProcessMemory.x64.csproj" />
-    <ProjectReference Include="..\..\ProcessMemory\ProcessMemory\ProcessMemory.csproj" />
     <ProjectReference Include="..\..\SRTHost\SRTPluginBase\SRTPluginBase.csproj">
       <Private>false</Private>
       <ExcludeAssets>runtime</ExcludeAssets>
