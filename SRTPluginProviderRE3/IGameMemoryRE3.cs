@@ -20,7 +20,7 @@ namespace SRTPluginProviderRE3
         float RankScore { get; set; }
         int Saves { get; set; }
         int MapID { get; set; }
-        float FrameDelta { get; set; }
+        float FrameDelta { get; set;  }
         bool IsRunning { get; set; }
         bool IsCutscene { get; set; }
         bool IsMenu { get; set; }

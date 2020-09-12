@@ -1,46 +1,73 @@
 ﻿using SRTPluginProviderRE3.Structures;
 using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace SRTPluginProviderRE3
 {
-    public struct GameMemoryRE3 : IGameMemoryRE3
+    public class GameMemoryRE3 : IGameMemoryRE3
     {
         private const string IGT_TIMESPAN_STRING_FORMAT = @"hh\:mm\:ss\.fff";
 
-        public int PlayerCurrentHealth { get; set; }
+        public int PlayerCurrentHealth { get => _playerCurrentHealth; set => _playerCurrentHealth = value; }
+        internal int _playerCurrentHealth;
 
-        public int PlayerMaxHealth { get; set; }
-        public int PlayerDeathCount { get; set; }
-        public int PlayerInventoryCount { get; set; }
+        public int PlayerMaxHealth { get => _playerMaxHealth; set => _playerMaxHealth = value; }
+        internal int _playerMaxHealth;
 
-        public InventoryEntry[] PlayerInventory { get; set; }
+        public int PlayerDeathCount { get => _playerDeathCount; set => _playerDeathCount = value; }
+        internal int _playerDeathCount;
 
-        public EnemyHP[] EnemyHealth { get; set; }
+        public int PlayerInventoryCount { get => _playerInventoryCount; set => _playerInventoryCount = value; }
+        internal int _playerInventoryCount;
 
-        public long IGTRunningTimer { get; set; }
+        public InventoryEntry[] PlayerInventory { get => _playerInventory; set => _playerInventory = value; }
+        internal InventoryEntry[] _playerInventory;
 
-        public long IGTCutsceneTimer { get; set; }
+        public EnemyHP[] EnemyHealth { get => _enemyHealth; set => _enemyHealth = value; }
+        internal EnemyHP[] _enemyHealth;
 
-        public long IGTMenuTimer { get; set; }
+        public long IGTRunningTimer { get => _igtRunningTimer; set => _igtRunningTimer = value; }
+        internal long _igtRunningTimer;
 
-        public long IGTPausedTimer { get; set; }
-        public int Difficulty { get; set; }
+        public long IGTCutsceneTimer { get => _igtCutsceneTimer; set => _igtCutsceneTimer = value; }
+        internal long _igtCutsceneTimer;
 
-        public int Rank { get; set; }
+        public long IGTMenuTimer { get => _igtMenuTimer; set => _igtMenuTimer = value; }
+        internal long _igtMenuTimer;
 
-        public float RankScore { get; set; }
+        public long IGTPausedTimer { get => _igtPausedTimer; set => _igtPausedTimer = value; }
+        internal long _igtPausedTimer;
 
-        public int Saves { get; set; }
+        public int Difficulty { get => _difficulty; set => _difficulty = value; }
+        internal int _difficulty;
 
-        public int MapID { get; set; }
+        public int Rank { get => _rank; set => _rank = value; }
+        internal int _rank;
 
-        public float FrameDelta { get; set; }
+        public float RankScore { get => _rankScore; set => _rankScore = value; }
+        internal float _rankScore;
 
-        public bool IsRunning { get; set; }
-        public bool IsCutscene { get; set; }
-        public bool IsMenu { get; set; }
-        public bool IsPaused { get; set; }
+        public int Saves { get => _saves; set => _saves = value; }
+        internal int _saves;
+
+        public int MapID { get => _mapID; set => _mapID = value; }
+        internal int _mapID;
+
+        public float FrameDelta { get => _frameDelta; set => _frameDelta = value; }
+        internal float _frameDelta;
+
+        public bool IsRunning { get => _isRunning != 0x00; set => _isRunning = (byte)(value ? 0x01 : 0x00); }
+        internal byte _isRunning;
+
+        public bool IsCutscene { get => _isCutscene != 0x00; set => _isCutscene = (byte)(value ? 0x01 : 0x00); }
+        internal byte _isCutscene;
+
+        public bool IsMenu { get => _isMenu != 0x00; set => _isMenu = (byte)(value ? 0x01 : 0x00); }
+        internal byte _isMenu;
+
+        public bool IsPaused { get => _isPaused != 0x00; set => _isPaused = (byte)(value ? 0x01 : 0x00); }
+        internal byte _isPaused;
 
         // Public Properties - Calculated
         public long IGTCalculated => unchecked(IGTRunningTimer - IGTCutsceneTimer - IGTPausedTimer);

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SRTPluginProviderRE3": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
