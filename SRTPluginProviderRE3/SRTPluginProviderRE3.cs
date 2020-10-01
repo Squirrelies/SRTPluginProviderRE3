@@ -64,7 +64,7 @@ namespace SRTPluginProviderRE3
             }
             catch (Win32Exception ex)
             {
-                if ((ProcessMemory.Common.Win32Error)ex.NativeErrorCode != ProcessMemory.Common.Win32Error.ERROR_PARTIAL_COPY)
+                if ((ProcessMemory.Win32Error)ex.NativeErrorCode != ProcessMemory.Win32Error.ERROR_PARTIAL_COPY)
                     hostDelegates.ExceptionMessage(ex);// Only show the error if its not ERROR_PARTIAL_COPY. ERROR_PARTIAL_COPY is typically an issue with reading as the program exits or reading right as the pointers are changing (i.e. switching back to main menu).
             }
             catch (Exception ex)

@@ -1,5 +1,5 @@
-﻿using ProcessMemory.x64;
-using static ProcessMemory.Common.Extensions;
+﻿using ProcessMemory;
+using static ProcessMemory.Extensions;
 using SRTPluginProviderRE3.Structures;
 using System;
 using System.Diagnostics;
@@ -45,10 +45,6 @@ namespace SRTPluginProviderRE3
         private MultilevelPointer PointerDeathCount { get; set; }
         private MultilevelPointer PointerDifficulty { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="proc"></param>
         internal GameMemoryRE3Scanner(Process process = null)
         {
             gameMemoryValues = new GameMemoryRE3();
@@ -56,7 +52,7 @@ namespace SRTPluginProviderRE3
                 Initialize(process);
         }
 
-        internal void Initialize(Process process)
+        internal unsafe void Initialize(Process process)
         {
             if (process == null)
                 return; // Do not continue if this is null.
@@ -68,7 +64,7 @@ namespace SRTPluginProviderRE3
             memoryAccess = new ProcessMemoryHandler(pid);
             if (ProcessRunning)
             {
-                BaseAddress = ProcessMemory.Common.NativeWrappers.GetProcessBaseAddress(pid, ProcessMemory.Common.PInvoke.ListModules.LIST_MODULES_64BIT); // Bypass .NET's managed solution for getting this and attempt to get this info ourselves via PInvoke since some users are getting 299 PARTIAL COPY when they seemingly shouldn't.
+                BaseAddress = ProcessMemory.NativeWrappers.GetProcessBaseAddress(pid, ProcessMemory.PInvoke.ListModules.LIST_MODULES_64BIT); // Bypass .NET's managed solution for getting this and attempt to get this info ourselves via PInvoke since some users are getting 299 PARTIAL COPY when they seemingly shouldn't.
 
                 // Setup the pointers.
                 PointerIGT = new MultilevelPointer(memoryAccess, IntPtr.Add(BaseAddress, pointerAddressIGT), 0x60);
@@ -96,6 +92,23 @@ namespace SRTPluginProviderRE3
         {
             switch (version)
             {
+                case GameVersion.RE3_WW_20200930_1:
+                    {
+                        pointerAddressFrameDelta = 0x08CE37A0;
+                        pointerAddressMapID = 0x054DC0F8;
+                        pointerAddressSaves = 0x08DACBC0;
+                        pointerAddressDeathCount = 0x08DACBC0;
+                        pointerAddressDifficulty = 0x08D81C70;
+                        pointerAddressState = 0x08DB5D20;
+                        pointerAddressIGT = 0x08DB0BA0;
+                        pointerAddressRank = 0x08D7E6A8;
+                        pointerAddressHP = 0x08D82BA0;
+                        pointerAddressInventory = 0x08D82BA0;
+                        pointerAddressEnemy = 0x08D838B0;
+
+                        return true;
+                    }
+
                 case GameVersion.RE3_WW_20200806_1:
                     {
                         pointerAddressFrameDelta = 0x08CEA790;
