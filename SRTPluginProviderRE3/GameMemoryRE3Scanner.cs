@@ -111,17 +111,17 @@ namespace SRTPluginProviderRE3
 
                 case GameVersion.BIO3_CEROZ_20200930_1:
                     {
-                        pointerAddressFrameDelta = 0x08CEA790;
-                        pointerAddressMapID = 0x0541A0F8; // *
-                        pointerAddressSaves = 0x08DB3BB0;
-                        pointerAddressDeathCount = 0x08DB3BB0;
-                        pointerAddressDifficulty = 0x08D88C60;
-                        pointerAddressState = 0x08CF38B8; // *
-                        pointerAddressIGT = 0x08DB7B90;
-                        pointerAddressRank = 0x08CBC6C0; // *
-                        pointerAddressHP = 0x08CC0C00; // *
-                        pointerAddressInventory = 0x08CC0C00; // *
-                        pointerAddressEnemy = 0x08D8A8A0;
+                        pointerAddressFrameDelta = 0x08C21760;
+                        pointerAddressMapID = 0x0541A0F8;
+                        pointerAddressSaves = 0x08CEAC70;
+                        pointerAddressDeathCount = 0x08CEAC70;
+                        pointerAddressDifficulty = 0x08CBF8F8;
+                        pointerAddressState = 0x08CF38B8;
+                        pointerAddressIGT = 0x08CEEC58;
+                        pointerAddressRank = 0x08CBC6C0;
+                        pointerAddressHP = 0x08CC0C00;
+                        pointerAddressInventory = 0x08CC0C00;
+                        pointerAddressEnemy = 0x08CC1898;
 
                         return true;
                     }
@@ -242,43 +242,45 @@ namespace SRTPluginProviderRE3
 
         internal unsafe IGameMemoryRE3 Refresh()
         {
+            bool success;
+
             // Frame Delta
             fixed (float* p = &gameMemoryValues._frameDelta)
-                PointerFrameDelta.TryDerefFloat(0x388, p);
+                success = PointerFrameDelta.TryDerefFloat(0x388, p);
 
             // State
             fixed (byte* p = &gameMemoryValues._isRunning)
-                PointerState.TryDerefByte(0x130, p);
+                success = PointerState.TryDerefByte(0x130, p);
             fixed (byte* p = &gameMemoryValues._isCutscene)
-                PointerState.TryDerefByte(0x131, p);
+                success = PointerState.TryDerefByte(0x131, p);
             fixed (byte* p = &gameMemoryValues._isMenu)
-                PointerState.TryDerefByte(0x132, p);
+                success = PointerState.TryDerefByte(0x132, p);
             fixed (byte* p = &gameMemoryValues._isPaused)
-                PointerState.TryDerefByte(0x133, p);
+                success = PointerState.TryDerefByte(0x133, p);
 
             // IGT
             fixed (long* p = &gameMemoryValues._igtRunningTimer)
-                PointerIGT.TryDerefLong(0x18, p);
+                success = PointerIGT.TryDerefLong(0x18, p);
             fixed (long* p = &gameMemoryValues._igtCutsceneTimer)
-                PointerIGT.TryDerefLong(0x20, p);
+                success = PointerIGT.TryDerefLong(0x20, p);
             fixed (long* p = &gameMemoryValues._igtMenuTimer)
-                PointerIGT.TryDerefLong(0x28, p);
+                success = PointerIGT.TryDerefLong(0x28, p);
             fixed (long* p = &gameMemoryValues._igtPausedTimer)
-                PointerIGT.TryDerefLong(0x30, p);
+                success = PointerIGT.TryDerefLong(0x30, p);
 
             // Player HP
             fixed (int* p = &gameMemoryValues._playerMaxHealth)
-                PointerPlayerHP.TryDerefInt(0x54, p);
+                success = PointerPlayerHP.TryDerefInt(0x54, p);
             fixed (int* p = &gameMemoryValues._playerCurrentHealth)
-                PointerPlayerHP.TryDerefInt(0x58, p);
+                success = PointerPlayerHP.TryDerefInt(0x58, p);
             fixed (int* p = &gameMemoryValues._rank)
-                PointerRank.TryDerefInt(0x58, p);
+                success = PointerRank.TryDerefInt(0x58, p);
             fixed (float* p = &gameMemoryValues._rankScore)
-                PointerRank.TryDerefFloat(0x5C, p);
+                success = PointerRank.TryDerefFloat(0x5C, p);
             fixed (int* p = &gameMemoryValues._saves)
-                PointerSaves.TryDerefInt(0x24, p);
+                success = PointerSaves.TryDerefInt(0x24, p);
             fixed (int* p = &gameMemoryValues._mapID)
-                PointerMapID.TryDerefInt(0x88, p);
+                success = PointerMapID.TryDerefInt(0x88, p);
 
             // Enemy HP
             GenerateEnemyEntries();
@@ -293,9 +295,14 @@ namespace SRTPluginProviderRE3
                 if (i < PointerEnemyEntries.Length)
                 { // While we're within the size of the enemy table, set the values.
                     fixed (int* p = &gameMemoryValues.EnemyHealth[i]._maximumHP)
-                        PointerEnemyEntries[i].TryDerefInt(0x54, p);
+                        success = PointerEnemyEntries[i].TryDerefInt(0x54, p);
+                    if (!success && gameMemoryValues.EnemyHealth[i].MaximumHP != 0)
+                        gameMemoryValues.EnemyHealth[i].MaximumHP = 0;
+
                     fixed (int* p = &gameMemoryValues.EnemyHealth[i]._currentHP)
-                        PointerEnemyEntries[i].TryDerefInt(0x58, p);
+                        success = PointerEnemyEntries[i].TryDerefInt(0x58, p);
+                    if (!success && gameMemoryValues.EnemyHealth[i].CurrentHP != 0)
+                        gameMemoryValues.EnemyHealth[i].CurrentHP = 0;
                 }
                 else
                 { // We're beyond the current size of the enemy table. It must have shrunk because it was larger before but for the sake of performance, we're not going to constantly recreate the array any time the size doesn't match. Just blank out the remaining array values.
@@ -306,7 +313,7 @@ namespace SRTPluginProviderRE3
 
             // Inventory
             fixed (int* p = &gameMemoryValues._playerInventoryCount)
-                PointerInventoryCount.TryDerefInt(0x90, p);
+                success = PointerInventoryCount.TryDerefInt(0x90, p);
             if (gameMemoryValues.PlayerInventory == null)
             {
                 gameMemoryValues.PlayerInventory = new InventoryEntry[20];
@@ -323,34 +330,34 @@ namespace SRTPluginProviderRE3
                     try
                     {
                         fixed (long* p = &gameMemoryValues.PlayerInventory[i]._invDataOffset)
-                            PointerInventoryEntries[i].TryDerefLong(0x10, p);
+                            success = PointerInventoryEntries[i].TryDerefLong(0x10, p);
                         gameMemoryValues.PlayerInventory[i]._invDataOffset -= PointerInventoryEntries[i].Address.ToInt64();
 
                         fixed (int* p = &gameMemoryValues.PlayerInventory[i]._slotPosition)
-                            PointerInventoryEntries[i].TryDerefInt(0x28, p);
+                            success = PointerInventoryEntries[i].TryDerefInt(0x28, p);
                         fixed (int* p = &gameMemoryValues.PlayerInventory[i]._data[0])
-                            PointerInventoryEntries[i].TryDerefByteArray((int)gameMemoryValues.PlayerInventory[i]._invDataOffset + 0x10, 20, (byte*)p);
+                            success = PointerInventoryEntries[i].TryDerefByteArray((int)gameMemoryValues.PlayerInventory[i]._invDataOffset + 0x10, 20, (byte*)p);
                     }
                     catch
                     {
                         fixed (int* p = &gameMemoryValues.PlayerInventory[i]._slotPosition)
-                            PointerInventoryEntries[i].TryDerefInt(0x28, p);
+                            success = PointerInventoryEntries[i].TryDerefInt(0x28, p);
                         gameMemoryValues.PlayerInventory[i]._data = InventoryEntry.EMPTY_INVENTORY_ITEM;
                     }
                 }
                 else
                 {
                     fixed (int* p = &gameMemoryValues.PlayerInventory[i]._slotPosition)
-                        PointerInventoryEntries[i].TryDerefInt(0x28, p);
+                        success = PointerInventoryEntries[i].TryDerefInt(0x28, p);
                     gameMemoryValues.PlayerInventory[i]._data = InventoryEntry.EMPTY_INVENTORY_ITEM;
                 }
             }
 
             // Other stats and info.
             fixed (int* p = &gameMemoryValues._playerDeathCount)
-                PointerDeathCount.TryDerefInt(0xC0, p);
+                success = PointerDeathCount.TryDerefInt(0xC0, p);
             fixed (int* p = &gameMemoryValues._difficulty)
-                PointerDifficulty.TryDerefInt(0x78, p);
+                success = PointerDifficulty.TryDerefInt(0x78, p);
 
             HasScanned = true;
             return gameMemoryValues;
