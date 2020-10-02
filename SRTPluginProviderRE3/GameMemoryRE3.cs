@@ -134,6 +134,11 @@ namespace SRTPluginProviderRE3
                     SRank = new TimeSpan(0, 1, 45, 0);
                     BRank = new TimeSpan(0, 4, 0, 0);
                 }
+                else
+                {
+                    SRank = new TimeSpan();
+                    BRank = new TimeSpan();
+                }
 
                 if (IGTTimeSpan <= SRank && Saves <= 5)
                     return "S";
