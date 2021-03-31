@@ -6,13 +6,13 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Platforms>x64</Platforms>
-    <Authors>Travis J Gutjahr</Authors>
-    <Company>Travis J Gutjahr</Company>
-    <Copyright>Copyright © 2020 Travis J Gutjahr</Copyright>
+    <Authors>Travis J. Gutjahr</Authors>
+    <Company>Travis J. Gutjahr</Company>
+    <Copyright>Copyright © 2021 Travis J. Gutjahr</Copyright>
     <Product>Resident Evil 3 (2020) Memory Provider Plugin</Product>
     <Description>A provider plugin for the SRT Host to provide memory values to other plugins.</Description>
-    <Version>2.3.1</Version>
-    <FileVersion>2.3.1.0</FileVersion>
+    <Version>2.3.3</Version>
+    <FileVersion>2.3.3.0</FileVersion>
     <AssemblyVersion>2.3.0.0</AssemblyVersion>
     <!-- netcoreapp3.1 had to be hardcoded here because this project reports $(TargetFramework) as netstandard2.0 (rightfully so) and I am not sure how this project's csproj can auto-detect another project's framework version to copy it to the appropriate folder so we're just... hardcoding this. -->
     <CopyDestionationPath>$(SolutionDir)..\SRTHost\SRTHost\bin\$(Configuration)\netcoreapp3.1\plugins</CopyDestionationPath>
@@ -35,7 +35,7 @@
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(BuildingInsideVisualStudio)' == 'true' And '$(TJGutjahr)' == 'true'">
-    <Exec Command="&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe&quot; sign /tr &quot;http://timestamp.digicert.com&quot; /td SHA1 /n &quot;Travis J Gutjahr&quot; /sm /fd SHA1 &quot;$(TargetDir)\$(ProjectName).dll&quot;&#xD;&#xA;&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe&quot; sign /tr &quot;http://timestamp.digicert.com&quot; /td SHA256 /n &quot;Travis J Gutjahr&quot; /sm /fd SHA256 /as &quot;$(TargetDir)\$(ProjectName).dll&quot;&#xD;&#xA;&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\signtool.exe&quot; sign /tr &quot;http://timestamp.digicert.com&quot; /td SHA512 /n &quot;Travis J Gutjahr&quot; /sm /fd SHA512 /as &quot;$(TargetDir)\$(ProjectName).dll&quot;&#xD;&#xA;" />
+    <Exec Command="&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\signtool.exe&quot; sign /tr &quot;http://timestamp.digicert.com&quot; /td SHA1 /sha1 &quot;027e4c2a016f695ab4adefda2d326199b571bf0a&quot; /fd SHA1 &quot;$(TargetDir)\$(ProjectName).dll&quot;&#xD;&#xA;&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\signtool.exe&quot; sign /tr &quot;http://timestamp.digicert.com&quot; /td SHA256 /sha1 &quot;027e4c2a016f695ab4adefda2d326199b571bf0a&quot; /fd SHA256 /as &quot;$(TargetDir)\$(ProjectName).dll&quot;&#xD;&#xA;&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\signtool.exe&quot; sign /tr &quot;http://timestamp.digicert.com&quot; /td SHA512 /sha1 &quot;027e4c2a016f695ab4adefda2d326199b571bf0a&quot; /fd SHA512 /as &quot;$(TargetDir)\$(ProjectName).dll&quot;&#xD;&#xA;" />
   </Target>
 
   <ItemGroup>

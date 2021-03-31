@@ -319,8 +319,18 @@ namespace SRTPluginProviderRE3
                 gameMemoryValues.PlayerInventory = new InventoryEntry[20];
                 for (int i = 0; i < gameMemoryValues.PlayerInventory.Length; ++i)
                 {
-                    gameMemoryValues.PlayerInventory[i] = new InventoryEntry() { _slotPosition = -1, _data = new int[5] };
-                    Array.Copy(InventoryEntry.EMPTY_INVENTORY_ITEM, 0, gameMemoryValues.PlayerInventory[i]._data, 0, 5);
+                    gameMemoryValues.PlayerInventory[i] = new InventoryEntry()
+                    {
+                        _slotPosition = unchecked((int)0xFFFFFFFF),
+                        _data = new int[5]
+                        {
+                            0x00000000,
+                            unchecked((int)0xFFFFFFFF),
+                            0x00000000,
+                            0x00000000,
+                            0x01000000
+                        }
+                    };
                 }
             }
             for (int i = 0; i < PointerInventoryEntries.Length; ++i)
@@ -342,14 +352,28 @@ namespace SRTPluginProviderRE3
                     {
                         fixed (int* p = &gameMemoryValues.PlayerInventory[i]._slotPosition)
                             success = PointerInventoryEntries[i].TryDerefInt(0x28, p);
-                        gameMemoryValues.PlayerInventory[i]._data = InventoryEntry.EMPTY_INVENTORY_ITEM;
+                        gameMemoryValues.PlayerInventory[i]._data = new int[5]
+                        {
+                            0x00000000,
+                            unchecked((int)0xFFFFFFFF),
+                            0x00000000,
+                            0x00000000,
+                            0x01000000
+                        };
                     }
                 }
                 else
                 {
                     fixed (int* p = &gameMemoryValues.PlayerInventory[i]._slotPosition)
                         success = PointerInventoryEntries[i].TryDerefInt(0x28, p);
-                    gameMemoryValues.PlayerInventory[i]._data = InventoryEntry.EMPTY_INVENTORY_ITEM;
+                    gameMemoryValues.PlayerInventory[i]._data = new int[5]
+                    {
+                        0x00000000,
+                        unchecked((int)0xFFFFFFFF),
+                        0x00000000,
+                        0x00000000,
+                        0x01000000
+                    };
                 }
             }
 

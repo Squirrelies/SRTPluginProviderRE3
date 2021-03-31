@@ -29,7 +29,7 @@ namespace SRTPluginProviderRE3.Structures
         }
 
         //internal static readonly byte[] EMPTY_INVENTORY_ITEM = new byte[20] { 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00 };
-        public static readonly int[] EMPTY_INVENTORY_ITEM = new int[5] { 0x00000000, unchecked((int)0xFFFFFFFF), 0x00000000, 0x00000000, 0x01000000 };
+        //public static readonly int[] EMPTY_INVENTORY_ITEM = new int[5] { 0x00000000, unchecked((int)0xFFFFFFFF), 0x00000000, 0x00000000, 0x01000000 };
 
         // Storage variable.
         public int SlotPosition { get => _slotPosition; set => _slotPosition = value; }
